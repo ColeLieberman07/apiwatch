@@ -1,0 +1,42 @@
+{
+  "captured_at": "2026-08-02T20:59:26Z",
+  "probes": [
+    {
+      "expect_status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "latency_ms": 38,
+      "pinned": {},
+      "probe": "balance",
+      "schema": {
+        "error": "object",
+        "error.message": "string",
+        "error.type": "string"
+      },
+      "status": 401,
+      "unreliable": "auth/rate-limit response (401)"
+    },
+    {
+      "expect_status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "latency_ms": 39,
+      "pinned": {
+        "error.code": null,
+        "error.param": null,
+        "error.type": "invalid_request_error"
+      },
+      "probe": "err_missing_param",
+      "schema": {
+        "error": "object",
+        "error.message": "string",
+        "error.type": "string"
+      },
+      "status": 401,
+      "unreliable": "auth/rate-limit response (401)"
+    }
+  ],
+  "target": "stripe"
+}
