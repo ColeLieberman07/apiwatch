@@ -1,1 +1,52 @@
+name: apiwatch
 
+on:
+  schedule:
+    # Every 6 hours. Frequent enough to catch same-day drift, cheap enough
+    # to stay inside the free tier forever.
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Take snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STRIPE_TEST_KEY: ${{ secrets.STRIPE_TEST_KEY }}
+        run: python -m apiwatch snapshot
+
+      - name: Diff against previous
+        id: diff
+        run: |
+          set +e
+          python -m apiwatch diff | tee report.txt
+          echo "breaking=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Commit snapshot history
+        run: |
+          git config user.name "apiwatch"
+          git config user.email "apiwatch@users.noreply.github.com"
+          git add snapshots
+          git diff --staged --quiet || git commit -m "snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
+
+      - name: Open issue on breaking change
+        if: steps.diff.outputs.breaking == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "Breaking API drift detected $(date -u +%Y-%m-%d)" \
+            --body-file report.txt
