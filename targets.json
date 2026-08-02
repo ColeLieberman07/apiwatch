@@ -1,0 +1,119 @@
+{
+  "_comment": [
+    "Every ${VAR} is read from the environment, so no secrets live in this file.",
+    "Include at least one deliberate error probe per target - error surfaces",
+    "drift more often than happy paths and are almost never documented.",
+    "expect_status tells the tool which non-200s are intentional, so a real",
+    "429 or 503 gets skipped instead of reported as 'every field removed'."
+  ],
+
+  "targets": [
+    {
+      "name": "npm",
+      "base_url": "https://registry.npmjs.org",
+      "probes": [
+        {
+          "name": "package_detail",
+          "path": "/express",
+          "pin_values": ["name", "dist-tags.latest", "license"]
+        },
+        {
+          "name": "package_version",
+          "path": "/express/4.18.2",
+          "pin_values": ["name", "version", "dist.integrity"]
+        },
+        {
+          "name": "err_not_found",
+          "path": "/apiwatch-probe-package-does-not-exist",
+          "expect_status": 404,
+          "pin_values": ["error"]
+        }
+      ]
+    },
+
+    {
+      "name": "pypi",
+      "base_url": "https://pypi.org",
+      "probes": [
+        {
+          "name": "package_detail",
+          "path": "/pypi/requests/json",
+          "pin_values": ["info.name", "info.yanked", "info.requires_python"]
+        },
+        {
+          "name": "package_version",
+          "path": "/pypi/requests/2.31.0/json",
+          "pin_values": ["info.version", "info.yanked"]
+        },
+        {
+          "name": "err_not_found",
+          "path": "/pypi/apiwatch-probe-package-does-not-exist/json",
+          "expect_status": 404
+        }
+      ]
+    },
+
+    {
+      "name": "crates",
+      "base_url": "https://crates.io/api/v1",
+      "probes": [
+        {
+          "name": "crate_detail",
+          "path": "/crates/serde",
+          "pin_values": ["crate.name", "crate.max_stable_version"]
+        },
+        {
+          "name": "err_not_found",
+          "path": "/crates/apiwatch_probe_crate_does_not_exist",
+          "expect_status": 404,
+          "pin_values": ["errors[].detail"]
+        }
+      ]
+    },
+
+    {
+      "name": "github",
+      "_note": "Set GITHUB_TOKEN or you will be rate limited to 60/hr per IP.",
+      "base_url": "https://api.github.com",
+      "headers": {
+        "Accept": "application/vnd.github+json",
+        "Authorization": "Bearer ${GITHUB_TOKEN}"
+      },
+      "probes": [
+        {
+          "name": "repo_detail",
+          "path": "/repos/python/cpython",
+          "pin_values": ["visibility", "default_branch"]
+        },
+        {
+          "name": "err_repo_not_found",
+          "path": "/repos/apiwatch-probe/does-not-exist",
+          "expect_status": 404,
+          "pin_values": ["message", "status"]
+        }
+      ]
+    },
+
+    {
+      "name": "stripe",
+      "_note": "Needs a free test-mode key in STRIPE_TEST_KEY (sk_test_...).",
+      "base_url": "https://api.stripe.com/v1",
+      "headers": {
+        "Authorization": "Bearer ${STRIPE_TEST_KEY}"
+      },
+      "probes": [
+        {
+          "name": "balance",
+          "path": "/balance"
+        },
+        {
+          "name": "err_missing_param",
+          "method": "POST",
+          "path": "/charges",
+          "expect_status": 400,
+          "pin_values": ["error.type", "error.code", "error.param"]
+        }
+      ]
+    }
+  ]
+}
