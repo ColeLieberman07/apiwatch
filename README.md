@@ -76,26 +76,7 @@ breaking change months ahead, and almost nobody reads them.
 This exists to answer one question: **do undocumented changes happen often
 enough that anyone would pay to hear about them?**
 
-1. Pick 3–5 APIs. Prefer ones shipping fast, with large developer bases.
-2. Let it run every 6 hours for 14 days. Don't touch it.
-3. Log every BREAKING and ADDITIVE finding. For each, check whether the vendor
-   documented it anywhere. **Undocumented catches are the only number that
-   matters.**
 
-### Kill criteria — decide now, not later
 
-- **0 undocumented catches in 14 days** → stop. The thesis is wrong and you
-  spent two weeks, which was the point.
-- **1–2** → real but too rare to sell. Either widen to noisier APIs (AI
-  provider APIs move much faster than package registries) or stop.
-- **3+** → you have a screenshot that argues for itself. That's your Hacker
-  News post, and it's worth more than any landing page.
 
-Do not extend to week three hoping. A fast honest no is the whole point of
-building it this way.
 
-## What v2 looks like (only after the above passes)
-
-Map findings back to source: "field `X` was removed, and you call it in
-`src/billing.ts:47`." That's when it stops being a monitor and starts being a
-product. Don't build it before you have the catches.
