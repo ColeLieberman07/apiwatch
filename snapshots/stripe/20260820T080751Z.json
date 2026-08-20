@@ -1,0 +1,67 @@
+{
+  "captured_at": "2026-08-20T08:07:51Z",
+  "probes": [
+    {
+      "expect_status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "stripe-version": "2026-07-29.dahlia"
+      },
+      "latency_ms": 170,
+      "pinned": {},
+      "probe": "balance",
+      "schema": {
+        "available": "array",
+        "available[]": "object",
+        "available[].amount": "int",
+        "available[].currency": "string",
+        "available[].source_types": "object",
+        "available[].source_types.card": "int",
+        "livemode": "bool",
+        "object": "string",
+        "pending": "array",
+        "pending[]": "object",
+        "pending[].amount": "int",
+        "pending[].currency": "string",
+        "pending[].source_types": "object",
+        "pending[].source_types.card": "int",
+        "refund_and_dispute_prefunding": "object",
+        "refund_and_dispute_prefunding.available": "array",
+        "refund_and_dispute_prefunding.available[]": "object",
+        "refund_and_dispute_prefunding.available[].amount": "int",
+        "refund_and_dispute_prefunding.available[].currency": "string",
+        "refund_and_dispute_prefunding.pending": "array",
+        "refund_and_dispute_prefunding.pending[]": "object",
+        "refund_and_dispute_prefunding.pending[].amount": "int",
+        "refund_and_dispute_prefunding.pending[].currency": "string"
+      },
+      "status": 200,
+      "unreliable": null
+    },
+    {
+      "expect_status": 400,
+      "headers": {
+        "content-type": "application/json",
+        "stripe-version": "2026-07-29.dahlia"
+      },
+      "latency_ms": 140,
+      "pinned": {
+        "error.code": "parameter_missing",
+        "error.param": null,
+        "error.type": "invalid_request_error"
+      },
+      "probe": "err_missing_param",
+      "schema": {
+        "error": "object",
+        "error.code": "string",
+        "error.doc_url": "string",
+        "error.message": "string",
+        "error.request_log_url": "string",
+        "error.type": "string"
+      },
+      "status": 400,
+      "unreliable": null
+    }
+  ],
+  "target": "stripe"
+}
